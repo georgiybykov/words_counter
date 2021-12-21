@@ -18,6 +18,8 @@ defmodule WordsCounter.MixProject do
   end
 
   defp deps do
-    []
+    [
+      {:flow, "~> 1.0"}
+    ]
   end
 end
