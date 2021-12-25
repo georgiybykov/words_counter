@@ -21,8 +21,8 @@ defmodule WordsCounter do
 
   @spec lazy_count_words_for(binary()) :: %{:words_for_file => non_neg_integer()}
   def lazy_count_words_for(file_path) do
-    Enum.reduce(
-      file_stream(file_path),
+    file_stream(file_path)
+    |> Enum.reduce(
       @acc_starting_value,
       fn line, acc -> count_words_for(line) + acc end
     )
