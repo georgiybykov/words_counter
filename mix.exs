@@ -19,7 +19,9 @@ defmodule WordsCounter.MixProject do
 
   defp deps do
     [
-      {:flow, "~> 1.0"}
+      {:flow, "~> 1.0"},
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:credo_contrib, "~> 0.2", only: [:dev, :test], runtime: false}
     ]
   end
 end
