@@ -16,16 +16,17 @@ defmodule WordsCounter do
   ## Example
 
       iex> WordsCounter.lazy_count_words_for("./test/data/count_words_example.txt")
-      20
+      %{:words_for_file => 20}
   """
 
-  @spec lazy_count_words_for(binary()) :: non_neg_integer()
+  @spec lazy_count_words_for(binary()) :: %{:words_for_file => non_neg_integer()}
   def lazy_count_words_for(file_path) do
     Enum.reduce(
       file_stream(file_path),
       @acc_starting_value,
       fn line, acc -> count_words_for(line) + acc end
     )
+    |> result()
   end
 
   @doc """
@@ -34,16 +35,17 @@ defmodule WordsCounter do
   ## Example
 
       iex> WordsCounter.flowy_count_words_for("./test/data/count_words_example.txt")
-      20
+      %{:words_for_file => 20}
   """
 
-  @spec flowy_count_words_for(binary()) :: non_neg_integer()
+  @spec flowy_count_words_for(binary()) :: %{:words_for_file => non_neg_integer()}
   def flowy_count_words_for(file_path) do
     file_stream(file_path)
     |> Flow.from_enumerable(max_demand: 20, stages: 8)
     |> Flow.partition(max_demand: 10, stages: 8, window: Flow.Window.count(10))
     |> Flow.reduce(fn -> [] end, fn line, acc -> [count_words_for(line) | acc] end)
     |> Enum.reduce(@acc_starting_value, &(&1 + &2))
+    |> result()
   end
 
   defp file_stream(file_path), do: File.stream!(Path.expand(file_path))
@@ -55,4 +57,6 @@ defmodule WordsCounter do
     |> Enum.filter(&(&1 != ""))
     |> Enum.count()
   end
+
+  defp result(number), do: %{words_for_file: number}
 end
