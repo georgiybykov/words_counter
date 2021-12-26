@@ -7,11 +7,10 @@ defmodule WordsCounter do
   will be counted as one word.
   """
 
+  @behaviour WordsCounter.Behaviour
+
   @acc_starting_value 0
   @split_pattern ~r{(\\s|\\t|\\n|[^\w'])+}
-
-  @typedoc "Words counter"
-  @type words_count() :: %{:words_for_file => non_neg_integer()}
 
   @doc """
   Lazy implementation.
@@ -22,7 +21,7 @@ defmodule WordsCounter do
       %{:words_for_file => 20}
   """
 
-  @spec lazy_count_words_for(binary()) :: words_count()
+  @impl WordsCounter.Behaviour
   def lazy_count_words_for(file_path) do
     file_stream(file_path)
     |> Enum.reduce(
@@ -41,7 +40,7 @@ defmodule WordsCounter do
       %{:words_for_file => 20}
   """
 
-  @spec flowy_count_words_for(binary()) :: words_count()
+  @impl WordsCounter.Behaviour
   def flowy_count_words_for(file_path) do
     file_stream(file_path)
     |> Flow.from_enumerable(max_demand: 20, stages: 8)
